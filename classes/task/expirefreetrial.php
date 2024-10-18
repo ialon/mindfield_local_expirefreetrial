@@ -22,7 +22,7 @@ class expirefreetrial extends \core\task\scheduled_task {
      */
     public function execute() {
         global $DB;
-        $objPluginValues = $DB->get_records_sql("SELECT * FROM mdl_config_plugins WHERE plugin = :plugin ", [
+        $objPluginValues = $DB->get_records_sql("SELECT * FROM {config_plugins} WHERE plugin = :plugin ", [
             'plugin' => 'local_expirefreetrial',
         ]);
         $startSemester = "";
@@ -38,7 +38,7 @@ class expirefreetrial extends \core\task\scheduled_task {
         $strToTimeStartSemester = strtotime($startSemester);
         $strToTimeStartdate30days = strtotime('+30 days', strtotime($startSemester));
         $strToendTrial = strtotime($endTrial." 23:59:00");
-        $objCourses = $DB->get_record_sql( 'SELECT GROUP_CONCAT(id) as courseids FROM mdl_course WHERE startdate >= ? AND startdate <= ?', [ $strToTimeStartSemester, $strToTimeStartdate30days] );
+        $objCourses = $DB->get_record_sql( 'SELECT GROUP_CONCAT(id) as courseids FROM {course} WHERE startdate >= ? AND startdate <= ?', [ $strToTimeStartSemester, $strToTimeStartdate30days] );
 	$arrcourseids = explode(",", $objCourses->courseids);
 	$cnt = 0;
 	$strQry = "(";
@@ -58,7 +58,7 @@ class expirefreetrial extends \core\task\scheduled_task {
 	$strQry .= ")";
 	//$strQry = "( courseid = 211 )";
 	//file_put_contents("/opt/studentfirstmedia/moodle/cache/log.txt", "strqry=>".print_r($strQry, true)."<=\n", FILE_APPEND);
-	$objEnrols = $DB->get_record_sql("SELECT GROUP_CONCAT(id) as enrolids FROM mdl_enrol WHERE $strQry AND enrol = ? AND enrolenddate < ? ", [ 'self', $strToTimeStartdate30days ] );
+	$objEnrols = $DB->get_record_sql("SELECT GROUP_CONCAT(id) as enrolids FROM {enrol} WHERE $strQry AND enrol = ? AND enrolenddate < ? ", [ 'self', $strToTimeStartdate30days ] );
 //	file_put_contents("/opt/studentfirstmedia/moodle/cache/log.txt", "LINE=>".__LINE__."=>objEnrols =>".print_r( $objEnrols, true )."<=\n", FILE_APPEND);
 	//	file_put_contents("/opt/studentfirstmedia/moodle/cache/log.txt", "LINE=>".__LINE__."=>objEnrolCourse=>".print_r( $objEnrolCourse, true )."<=", FILE_APPEND);
 	$arrenrolids = explode(",", $objEnrols->enrolids);
