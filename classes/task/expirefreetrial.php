@@ -39,7 +39,7 @@ class expirefreetrial extends \core\task\scheduled_task {
         $strToTimeStartdate30days = strtotime('+30 days', strtotime($startSemester));
         $strToendTrial = strtotime($endTrial." 23:59:00");
         $objCourses = $DB->get_record_sql( 'SELECT GROUP_CONCAT(id) as courseids FROM {course} WHERE startdate >= ? AND startdate <= ?', [ $strToTimeStartSemester, $strToTimeStartdate30days] );
-	$arrcourseids = explode(",", $objCourses->courseids);
+	$arrcourseids = explode(",", $objCourses->courseids, -1);
 	$cnt = 0;
 	$strQry = "(";
 	foreach( $arrcourseids as $keyaci => $valaci ){
